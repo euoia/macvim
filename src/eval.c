@@ -6899,8 +6899,8 @@ garbage_collect()
 free_unref_items(copyID)
     int copyID;
 {
-    dict_T	*dd;
-    list_T	*ll;
+    dict_T	*dd, *dd_next;
+    list_T	*ll, *ll_next;
     int		did_free = FALSE;
 
     /*
@@ -6912,11 +6912,10 @@ free_unref_items(copyID)
 	    /* Free the Dictionary and ordinary items it contains, but don't
 	     * recurse into Lists and Dictionaries, they will be in the list
 	     * of dicts or list of lists. */
+	    dd_next = dd->dv_used_next;
 	    dict_free(dd, FALSE);
 	    did_free = TRUE;
-
-	    /* restart, next dict may also have been freed */
-	    dd = first_dict;
+	    dd = dd_next;
 	}
 	else
 	    dd = dd->dv_used_next;
@@ -6933,11 +6932,10 @@ free_unref_items(copyID)
 	    /* Free the List and ordinary items it contains, but don't recurse
 	     * into Lists and Dictionaries, they will be in the list of dicts
 	     * or list of lists. */
+	    ll_next = ll->lv_used_next;
 	    list_free(ll, FALSE);
 	    did_free = TRUE;
-
-	    /* restart, next list may also have been freed */
-	    ll = first_list;
+	    ll = ll_next;
 	}
 	else
 	    ll = ll->lv_used_next;
